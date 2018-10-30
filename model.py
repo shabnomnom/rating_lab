@@ -23,6 +23,12 @@ class User(db.Model):
     age = db.Column(db.Integer, nullable=True)
     zipcode = db.Column(db.String(15), nullable=True)
 
+    rat = db.relationship('Rating')
+
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return f"<User user_id={self.user_id} email={self.email}>"
 
 # Put your Movie and Rating model classes here.
 
@@ -31,9 +37,14 @@ class Movie(db.Model):
     __tablename__ = "movies"
 
     movie_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    title = db.Column(db.String(64), nullable=False)
-    released_at = db.Column(db.String(11), nullable=False)
-    imdb_url = db.Column(db.String(64), nullable=True)
+    title = db.Column(db.String(100), nullable=False)
+    released_at = db.Column(db.DateTime, nullable=False)
+    imdb_url = db.Column(db.String(300), nullable=True)
+
+    rat = db.relationship('Rating')
+
+
+
 
 
 class Rating(db.Model):
@@ -41,10 +52,13 @@ class Rating(db.Model):
     __tablename__="ratings"
 
     rating_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    movie_id = db.Column(db.Integer, autoincrement=True)
-    user_id = db.Column(db.Integer, autoincrement=True)
-    score = db.Column(db.Integer, nullable=True)
+    movie_id = db.Column(db.Integer, db.ForeignKey('movies.movie_id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    movie_score = db.Column(db.Integer, nullable=False)
 
+    mov = db.relationship('Movie')
+
+    usr = db.relationship('User')
 
 
 
