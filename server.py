@@ -31,12 +31,38 @@ def user_list():
     users= User.query.all()
     return render_template("user_list.html", users=users)
 
-@app.route('/homepage', methods=["POST"])
+@app.route('/register', methods=["GET"])
 def register_form():
+
+    return render_template("register.html")
+
+
+@app.route('/register', methods=["POST"])
+def register_process():
     email_address = request.form.get('email')
     password = request.form.get('password')
+    age = request.form.get('age')
+    zip_code = request.form.get('zipcode')
+    app.logger.info(request.form)
+    app.logger.info(db.session.query(User).filter(User.email == email_address).all())
 
-    return render_template("homepage.html")
+
+    # to check if the filtered query exists in the users table  
+    if db.session.query(User).filter(User.email == email_address).all():
+        message = "Email address already registered to an existing user. Please log in."
+        app.logger.info(str(message))
+        return redirect("/")
+    else:
+        #adding the new user to the database 
+        new_user = User(email = email_address, password = password, age = age, zipcode = zip_code)
+        app.logger.info(str(new_user))
+        db.session.add(new_user)
+        db.session.commit()
+
+
+
+
+    return redirect("/")
 
 
 if __name__ == "__main__":
