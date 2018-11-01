@@ -1,20 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
 
-	<h2>welcome back {{user.email}}</h2>
+    <h2>welcome back {{user.email}}</h2>
+    <div>
+    zipcode: {{zipcode}}
+    <br></br>
+    Age:{{age}}
+    <br></br>
 
-	<div>User Info : 
+    <ul>
+        {% for movie in movie_rating_info %}
+            <li>
+                 movie id:{{ movie[0] }} movie title:{{movie[1]}} movie rating: {{movie[2]}}
+                </a>
+            </li>
+        {% endfor %}
 
-		zipcode:{{ zipcode }}
-		age:{{ age }}
-		<!-- <ul>
-		{% for movie in movie_ratings %}
-			<li>
-					movie:{{ movie[0] }} score:{{ score[1] }})
-				</a>
-			</li>
-		{% endfor %}
-	</ul> -->
 
-				
+    </ul>
+    
+    </div>
 {% endblock %}

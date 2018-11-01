@@ -87,7 +87,7 @@ def log_in_process():
         session['current_user_id'] = user.user_id
         flash (' logged in as {}'.format(email_address))
 
-        return redirect("/")
+        return render_template("/users/<user_id>")
     else:
         flash("wrong password, try again")
         return redirect('/log_in')
@@ -105,17 +105,42 @@ def log_out():
 def show_user_profile(user_id):
     """show the user detail for the specific user id"""
 
-    user = db.session.query(User).filter(User.user_id == user_id).one()
+    user = db.session.query(User).filter(User.user_id == user_id).first()
     zipcode = user.zipcode
     age = user.age 
-    #if db.session.query(Rating.user_id).all():
-    #movie_ratings = db.session.query(Rating.movie_id, Rating.movie_score).filter(Rating.user_id == user_id).all()
+
+    movie_rating_info = db.session.query(Rating.movie_id, Movie.title,
+        Rating.movie_score).join(Movie).filter(Rating.user_id== user_id).all()
+
+    #debugging 
+    app.logger.info(str(movie_rating_info))
+
+    return render_template("user.html", zipcode=zipcode, age= age,
+        user= user, movie_rating_info=movie_rating_info)
+
+@app.route('/movies')
+def movie_list():
+    """show list of movies"""
+
+    movies= Movie.query.order_by(Movie.title).all()
+    return render_template("movie_list.html", movies=movies)
 
 
-            
-    return render_template("user.html", user=user, zipcode=zipcode, age=age)
+@app.route("/movies/<movie_title>")
+def movie_detail_page(movie_title):
+    """show the user detail for the specific user id"""
+
+    movie= db.session.query(Movie).filter(Movie.title == movie_title).first()
 
 
+
+    movie_score_list = db.session.query(Rating.movie_score).join(Movie).filter(Movie.title== movie_title).all()
+
+    app.logger.info(str(movie_score_list))
+ 
+    
+
+    return render_template("movie.html", movie_score_list=movie_score_list, movie=movie)
 
 
 if __name__ == "__main__":

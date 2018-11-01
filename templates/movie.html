@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2>{{movie.title}}</h2>
+    <h3>{{movie.released_at.year}}</h3>
+    <br></br>
+    <a href=>{{movie.imdb_url}}
+    </a>
+
+    <ul>
+        {% for score in movie_score_list %}
+            <li>
+                 scored at: {{ score[0]}} 
+            </li>
+        {% endfor %}
+
+
+    </ul>
+    
+{% endblock %}
