@@ -43,10 +43,6 @@ class Movie(db.Model):
 
     #rat = db.relationship('Rating')
 
-
-
-
-
 class Rating(db.Model):
     """ Rating info """
     __tablename__="ratings"

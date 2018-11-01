@@ -53,16 +53,30 @@ def register_process():
         app.logger.info(str(message))
         return redirect("/")
     else:
-        #adding the new user to the database 
+        #adding the new user to the databaspe 
         new_user = User(email = email_address, password = password, age = age, zipcode = zip_code)
         app.logger.info(str(new_user))
         db.session.add(new_user)
         db.session.commit()
 
-
-
-
     return redirect("/")
+
+@app.route('/users/<user_id>')
+def user_info(user_id):
+    user = db.session.query(User).filter(User.user_id == user_id).first()
+    zipcode = user.zipcode 
+    age = user.age 
+
+    movie_rating_info = db.session.query(Rating.movie_id, Movie.title,
+        Rating.movie_score).join(Movie).filter(Rating.user_id== user_id).all()
+    
+    app.logger.info(str(movie_rating_info))
+
+
+    return render_template("user_info.html", zipcode=zipcode, age= age,
+        user= user, movie_rating_info=movie_rating_info)
+
+
 
 
 if __name__ == "__main__":
