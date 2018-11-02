@@ -87,7 +87,7 @@ def log_in_process():
         session['current_user_id'] = user.user_id
         flash (' logged in as {}'.format(email_address))
 
-        return render_template("/users/<user_id>")
+        return redirect(f"/users/{user.id}")
     else:
         flash("wrong password, try again")
         return redirect('/log_in')
