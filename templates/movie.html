@@ -7,23 +7,32 @@
     <a href=>{{movie.imdb_url}}
     </a>
 
+     {% if session %}
+        <form action="/movies/{{ movie.title}}" method='POST'>
+            What would you rate this movie? 
+            <select name= "rate">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+            <input type='submit'>
+        <br><br>
+        </form>
+    {% endif %}
+
     <ul>
         {% for score in movie_score_list %}
-            <li>
                  scored at: {{ score[0]}} 
-            </li>
+
         {% endfor %}
 
     </ul>
 
 
     
-{% if session %}
-    <form action="/movies/<movie_title>" method='POST'>
-        <input type='submit' value='Log Out' name='log_out'>
-    <br><br>
-    </form>
-{% endif %}
+   
 
 
     

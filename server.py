@@ -75,6 +75,10 @@ def log_in_form():
 
     return render_template("log_in.html")
 
+
+#session['key'] = [user.user_id]
+#session['key'].append(movie_id), [user_id]
+
 @app.route('/log_in',methods=["POST"])
 def log_in_process():
     """ handle log in with the post data from log_in html"""
@@ -82,12 +86,13 @@ def log_in_process():
     email_address = request.form.get('email')
     password = request.form.get('password')
 
+
     user = db.session.query(User).filter(User.email == email_address).one()
     if user.password == password:
         session['current_user_id'] = user.user_id
         flash (' logged in as {}'.format(email_address))
 
-        return redirect(f"/users/{user.id}")
+        return redirect(f"/users/{user.user_id}")
     else:
         flash("wrong password, try again")
         return redirect('/log_in')
@@ -129,18 +134,51 @@ def movie_list():
 @app.route("/movies/<movie_title>")
 def movie_detail_page(movie_title):
     """show the user detail for the specific user id"""
-
-    movie= db.session.query(Movie).filter(Movie.title == movie_title).first()
-
+    print(movie_title)
+    movie = db.session.query(Movie).filter(Movie.title == movie_title).first()
 
 
     movie_score_list = db.session.query(Rating.movie_score).join(Movie).filter(Movie.title== movie_title).all()
 
     app.logger.info(str(movie_score_list))
- 
-    
 
     return render_template("movie.html", movie_score_list=movie_score_list, movie=movie)
+
+@app.route("/movies/<movie_title>", methods=["POST"])
+def handle_new_rating(movie_title):
+ 
+    movie= db.session.query(Movie).filter(Movie.title == movie_title).first()
+
+    app.logger.info(str(movie))
+    print(movie)
+
+    user_id = session['current_user_id']
+    print(user_id)
+
+
+    new_rating = request.form.get('rate')
+    
+
+    if session:
+        update_movie = db.session.query(Rating).join(Movie).filter(Movie.title== movie_title,
+                       Rating.user_id==user_id).first()
+
+        if update_movie is None:
+            print("Time to insert")
+
+            new_rating_query = Rating(user_id=int(session['current_user_id']),
+                               movie_id=movie.movie_id, movie_score=int(new_rating))
+
+            db.session.add(new_rating_query)
+            db.session.commit()
+
+
+        else:
+            setattr(update_movie, 'movie_score', int(new_rating))
+            db.session.commit()
+            
+
+    return redirect(f"/movies/{movie_title}")
 
 
 if __name__ == "__main__":
